@@ -68,6 +68,3 @@ class MyUser(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-
-
-# write a lot of custom clean method
