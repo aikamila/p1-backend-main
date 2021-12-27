@@ -42,7 +42,7 @@ class EmailVerificationUtils:
 
     @staticmethod
     def obtain_tokens(user):
-        if user is not None:
+        if user is not None and user.is_active:
             refresh = RefreshToken.for_user(user=user)
             access = refresh.access_token
             return {'refresh': str(refresh), 'access': str(access)}

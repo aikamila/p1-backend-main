@@ -3,9 +3,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .emails.verification.utils import EmailVerificationUtils, initial_email_verification_token_generator
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import TokenError, TokenBackendError
 
 
 class CreateUserView(APIView):
+    """
+    Creating a user account if the data is valid. Sending a
+    verification email.
+    """
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
         if serializer.is_valid():
@@ -34,3 +40,19 @@ class InitialVerifyEmailView(APIView):
                 return Response(data, status=status.HTTP_200_OK)
         return Response({}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+class TokenBlacklistView(APIView):
+    """
+    If the token passed in a request is valid, it is blacklisted.
+    """
+    def post(self, request):
+        try:
+            refresh = request.data['refresh']
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh_token = RefreshToken(refresh)
+        except (TokenError, TokenBackendError):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        refresh_token.blacklist()
+        return Response(status=status.HTTP_200_OK)

@@ -1,11 +1,11 @@
-from ..emails import SingleEmail
+from ..emails import Email
 from django.conf import settings
 from django.template.loader import render_to_string
 from .utils import initial_email_verification_token_generator, EmailVerificationUtils
 from django.core.mail import send_mail
 
 
-class InitialVerificationEmail(SingleEmail):
+class InitialVerificationEmail(Email):
     """
     This class derives from the SingleEmail abstract class
     Its responsibility is sending initial verification emails

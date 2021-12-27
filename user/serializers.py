@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from .emails.verification.emails import InitialVerificationEmail
 import re
 from rest_framework import serializers
+from .emails.emails import EmailDispatcher
 
 
 class CreateUserSerializer(ModelSerializer):
@@ -28,12 +29,28 @@ class CreateUserSerializer(ModelSerializer):
         return value
 
     def validate_username(self, value):
-        pattern = re.compile(r'^[a-zA-Z0-9_.-]+$')
+        pattern = re.compile(r'^[a-zA-Z0-9_.-]{3,30}$')
         if pattern.fullmatch(value) is None:
             raise serializers.ValidationError("Invalid format of the username")
         return value
 
-    # should bio and password be validated in any way?
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long")
+
+        def check_alnum(ch):
+            return ch.isalnum()
+
+        result = map(check_alnum, value)
+        if not all(list(result)):
+            raise serializers.ValidationError("Password must contain only letters, numbers and *, &, @")
+        result = 1
+        for char in value:
+            if char.isupper():
+                result = result * 0
+        if result == 1:
+            raise serializers.ValidationError("Password must contain at least one uppercase letter")
+        return value
 
     def save(self, **kwargs):
         # you cant just use super bc normal save doesnt save passwords in a normal way
@@ -44,7 +61,8 @@ class CreateUserSerializer(ModelSerializer):
                                          username=self.validated_data['username'],
                                          password=self.validated_data['password'])
         if user:
-            # not really necessary but i prefer to be cautious
+            # not really necessary but I prefer to be cautious
             email = InitialVerificationEmail(user)
-            email.send()
+            dispatcher = EmailDispatcher(email)
+            dispatcher.send()
 
