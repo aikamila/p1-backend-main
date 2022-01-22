@@ -27,12 +27,12 @@ class InitialVerifyEmailView(APIView):
     """
     def post(self, request):
         try:
-            id = request.data['id']
+            pk = request.data['id']
             token = request.data['token']
         except KeyError:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
-        if id and token:
-            user = EmailVerificationUtils.decode_user(id)
+        if pk and token:
+            user = EmailVerificationUtils.decode_user(pk)
             if user is not None and initial_email_verification_token_generator.check_token(user, token):
                 user.is_active = True
                 user.save()

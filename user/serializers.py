@@ -8,7 +8,7 @@ from .emails.emails import EmailDispatcher
 
 class CreateUserSerializer(ModelSerializer):
     """
-    User creation and sending verification emails
+    User creation, validation of data and sending verification emails
     """
     class Meta:
         model = get_user_model()
@@ -17,16 +17,16 @@ class CreateUserSerializer(ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_name(self, value):
-        pattern = re.compile(r'^[A-Z]{1}[a-z]+ ?[A-Z]?[a-z]*$')
-        if pattern.fullmatch(value) is None:
+        pattern = re.compile(r'^[A-Za-z]+ {1}[A-Za-z]+$|^[A-Za-z]+$')
+        if pattern.fullmatch(value.strip()) is None:
             raise serializers.ValidationError("Invalid format of the name")
-        return value
+        return value.strip()
 
     def validate_surname(self, value):
-        pattern = re.compile(r'^[A-Z]{1}[a-z]+[- ]?[A-Z]?[a-z]*$')
-        if pattern.fullmatch(value) is None:
+        pattern = re.compile(r'^[A-Za-z]+[ -]{1}[A-Za-z]+$|^[A-Za-z]+$')
+        if pattern.fullmatch(value.strip()) is None:
             raise serializers.ValidationError("Invalid format of the surname")
-        return value
+        return value.strip()
 
     def validate_username(self, value):
         pattern = re.compile(r'^[a-zA-Z0-9_.-]{3,30}$')
@@ -38,12 +38,15 @@ class CreateUserSerializer(ModelSerializer):
         if len(value) < 8:
             raise serializers.ValidationError("Password must be at least 8 characters long")
 
-        def check_alnum(ch):
-            return ch.isalnum()
+        # if len(value) > 60:
+        #     raise serializers.ValidationError("Password can't be longer than 60 characters")
 
-        result = map(check_alnum, value)
-        if not all(list(result)):
-            raise serializers.ValidationError("Password must contain only letters, numbers and *, &, @")
+        # def check_alnum(ch):
+        #     return ch.isalnum() --- helper function
+
+        # result = map(check_alnum, value)
+        # if not all(result):
+        #     raise serializers.ValidationError("Password must contain only letters and numbers")
         result = 1
         for char in value:
             if char.isupper():
@@ -53,7 +56,7 @@ class CreateUserSerializer(ModelSerializer):
         return value
 
     def save(self, **kwargs):
-        # you cant just use super bc normal save doesnt save passwords in a normal way
+        # you cant just use super bc normal save doesnt save passwords in a proper way
         model = get_user_model()
         user = model.objects.create_user(email=self.validated_data['email'],
                                          name=self.validated_data['name'],

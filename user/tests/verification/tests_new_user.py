@@ -17,7 +17,7 @@ class CreateUserAPITest(APITestCase):
     def setUp(self):
         self.url = reverse('api_user_creation')
 
-    def test_invalid_user_creation_not_unique_username(self):
+    def test_invalid_data_not_unique_username(self):
         response = self.client.post(self.url, {'email': 'test@test.com',
                                                'name': 'Test',
                                                'surname': 'Test',
@@ -35,7 +35,7 @@ class CreateUserAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {"username": ["my user with this username already exists."]})
 
-    def test_invalid_user_creation_not_unique_email(self):
+    def test_invalid_data_not_unique_email(self):
         response = self.client.post(self.url, {'email': 'test@test.com',
                                                'name': 'Test',
                                                'surname': 'Test',
@@ -52,7 +52,7 @@ class CreateUserAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {"email": ["my user with this email already exists."]})
 
-    def test_invalid_user_creation_not_all_fields(self):
+    def test_invalid_data_not_all_fields(self):
         serializer = CreateUserSerializer(data={'email': 'test@test.com',
                                                 'surname': 'Test',
                                                 'username': 'UserOne',
@@ -84,7 +84,7 @@ class CreateUserAPITest(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['password']))
 
-    def test_invalid_email_user_creation(self):
+    def test_invalid_email(self):
         serializer = CreateUserSerializer(data={'email': 'test.com',
                                                 'name': 'Testing',
                                                 'surname': 'Test',
@@ -93,25 +93,32 @@ class CreateUserAPITest(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['email']))
 
-    def test_invalid_name_user_creation(self):
+    def test_invalid_name(self):
         serializer = CreateUserSerializer(data={'email': 'test@test.com',
-                                                'name': 'testing',
+                                                'name': 'testing3',
+                                                'surname': 'Test',
+                                                'username': 'UserOne',
+                                                'password': 'Password'})
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(set(serializer.errors.keys()), set(['name']))
+        serializer = CreateUserSerializer(data={'email': 'test@test.com',
+                                                'name': 'testing  testing',
                                                 'surname': 'Test',
                                                 'username': 'UserOne',
                                                 'password': 'Password'})
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['name']))
 
-    def test_invalid_surname_user_creation(self):
+    def test_invalid_surname(self):
         serializer = CreateUserSerializer(data={'email': 'test@test.com',
                                                 'name': 'Testing',
-                                                'surname': 'test',
+                                                'surname': 'test*',
                                                 'username': 'UserOne',
                                                 'password': 'Password'})
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['surname']))
 
-    def test_invalid_username_user_creation(self):
+    def test_invalid_username(self):
         serializer = CreateUserSerializer(data={'email': 'test@test.com',
                                                 'name': 'Testing',
                                                 'surname': 'Test',
@@ -134,7 +141,7 @@ class CreateUserAPITest(APITestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['username']))
 
-    def test_invalid_password_user_creation(self):
+    def test_invalid_password(self):
         serializer = CreateUserSerializer(data={'email': 'test@test.com',
                                                 'name': 'Testing',
                                                 'surname': 'Test',
@@ -149,18 +156,11 @@ class CreateUserAPITest(APITestCase):
                                                 'password': 'Pass'})
         self.assertFalse(serializer.is_valid())
         self.assertEqual(set(serializer.errors.keys()), set(['password']))
-        serializer = CreateUserSerializer(data={'email': 'test@test.com',
-                                                'name': 'Testing',
-                                                'surname': 'Test',
-                                                'username': 'UserOne',
-                                                'password': 'Password#'})
-        self.assertFalse(serializer.is_valid())
-        self.assertEqual(set(serializer.errors.keys()), set(['password']))
 
 
-class CreateAndVerifyUsersEmailTest(APITestCase):
+class CreateAndVerifyUsersWithEmailsTest(APITestCase):
     """
-    Testing of the entire creating-verification of users flow
+    Testing of the entire creating-verification of users workflow
     """
     def setUp(self):
         self.url_create = reverse('api_user_creation')
@@ -171,7 +171,7 @@ class CreateAndVerifyUsersEmailTest(APITestCase):
                                                       'name': 'test',
                                                       'surname': 'Test',
                                                       'username': 'UserOne',
-                                                      'password': 'Password'},
+                                                      'password': 'password'},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         user = get_user_model()
@@ -180,7 +180,7 @@ class CreateAndVerifyUsersEmailTest(APITestCase):
 
     def test_create_valid(self):
         response = self.client.post(self.url_create, {'email': 'testtest@test.com',
-                                                      'name': 'Test',
+                                                      'name': 'Test     ',
                                                       'surname': 'Test',
                                                       'username': 'UserOne',
                                                       'password': 'Password'},

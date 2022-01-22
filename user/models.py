@@ -44,12 +44,12 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    username = models.CharField(max_length=100, unique=True)
+    username = models.CharField(max_length=30, unique=True)
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     is_active = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    bio = models.TextField(blank=True)
+    bio = models.TextField(max_length=150, blank=True)
 
     objects = MyUserManager()
 
