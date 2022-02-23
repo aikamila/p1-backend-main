@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-# Abstract classes for emails
+# Abstract class for emails
 class Email(ABC):
     def __init__(self, target):
         self.target = target

@@ -11,17 +11,23 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
-from . import my_secrets
 from datetime import timedelta
+import os
+import dotenv
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = my_secrets.SECRET_KEY
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,11 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'posts_comments',
-    'user',
+    'posts_comments.apps.PostsCommentsConfig',
+    'user.apps.UserConfig',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    'corsheaders'
+    'corsheaders',
+    'django_filters'
     # 'django.contrib.postgres',
 ]
 
@@ -86,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'backend-first-dev',
         'USER': 'postgres',
-        'PASSWORD': my_secrets.DATABASE_PASSWORD,
+        'PASSWORD':os.environ['DATABASE_PASSWORD'],
         'HOST': 'localhost',
         'PORT': ''
     }
@@ -146,10 +153,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'camille14109@gmail.com'
-EMAIL_HOST_PASSWORD = 'kamilaluczaj'
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 
 FRONT_END = '127.0.0.1:3000/'
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),

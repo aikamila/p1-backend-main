@@ -1,29 +1,48 @@
-from .serializers import CreateUserSerializer
+from .serializers import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .emails.verification.utils import EmailVerificationUtils, initial_email_verification_token_generator
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.tokens import TokenError, TokenBackendError
+from rest_framework import viewsets
+from .custom_permissions import UserViewPermission
+from django.contrib.auth import get_user_model
 
 
-class CreateUserView(APIView):
-    """
-    Creating a user account if the data is valid. Sending a
-    verification email.
-    """
-    def post(self, request):
-        serializer = CreateUserSerializer(data=request.data)
+class UserView(viewsets.ViewSet):
+    permission_classes = [UserViewPermission]
+
+    def create(self, request):
+        """
+        Creating a user account if the data is valid. Sending a
+        verification email.
+        """
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def retrieve(self, request, pk=None):
+        """
+        Responds with user's data or 404 if the user doesn't exist/is inactive.
+        """
+        user_model = get_user_model()
+        try:
+            user = user_model.objects.get(pk=pk)
+        except user_model.DoesNotExist:
+            return Response({'message': 'This user does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        if not user.is_active:
+            return Response({'message': 'This user is not active.'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class InitialVerifyEmailView(APIView):
     """
     Activation of the user's account. If credentials provided in
-    the request are valid, response contains a pair of JWT tokens
+    the request are valid, the response contains a pair of JWT tokens
     """
     def post(self, request):
         try:
