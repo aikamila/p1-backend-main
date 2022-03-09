@@ -33,7 +33,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'https://arcane-spire-03245.herokuapp.com/']
+ALLOWED_HOSTS = ['127.0.0.1', 'arcane-spire-03245.herokuapp.com/']
 
 
 # Application definition
