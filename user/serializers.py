@@ -63,7 +63,7 @@ class UserSerializer(BasicInfoUserSerializer):
                                          username=self.validated_data['username'],
                                          password=self.validated_data['password'],
                                          bio=self.validated_data.get('bio', ''))
-        # email = InitialVerificationEmail(user)
-        # dispatcher = EmailDispatcher(email)
-        # dispatcher.send()
+        email = InitialVerificationEmail(user)
+        dispatcher = EmailDispatcher(email)
+        dispatcher.send()
         return user
