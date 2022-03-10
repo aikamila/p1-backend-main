@@ -71,7 +71,7 @@ ROOT_URLCONF = 'backend_first.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [r'user\emails\templates'],
+        'DIRS': [r'user/emails/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
