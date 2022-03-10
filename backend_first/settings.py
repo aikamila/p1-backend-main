@@ -31,7 +31,7 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'arcane-spire-03245.herokuapp.com']
 
@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'backend-first-dev',
         'USER': 'postgres',
-        'PASSWORD':os.environ['DATABASE_PASSWORD'],
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
         'HOST': 'localhost',
         'PORT': ''
     }
@@ -146,7 +146,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -162,7 +161,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'camille14109@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 
-FRONT_END = '127.0.0.1:3000/'
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -198,3 +196,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+FRONT_END = '127.0.0.1:3000/'
