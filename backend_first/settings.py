@@ -31,12 +31,10 @@ if os.path.isfile(dotenv_file):
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ['DEBUG']
 
-ALLOWED_HOSTS = ['127.0.0.1', 'arcane-spire-03245.herokuapp.com', 'www.internal.shangify.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'arcane-spire-03245.herokuapp.com']
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,10 +83,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend_first.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -199,4 +193,8 @@ CORS_ALLOWED_ORIGINS = [
 
 FRONT_END = '127.0.0.1:3000/'
 
-SECURE_SSL_REDIRECT = True
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 600
+
+    # or should you use this setting with time(instead of redirection?)
