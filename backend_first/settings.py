@@ -189,8 +189,9 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://sharp-toothed-tiger.herokuapp.com/",
-    "http://sharp-toothed-tiger.herokuapp.com/"
+    "https://sharp-toothed-tiger.herokuapp.com",
+    "http://sharp-toothed-tiger.herokuapp.com",
+    "https://www.shangify.com"
 ]
 
 FRONT_END = '127.0.0.1:3000/'
@@ -198,5 +199,4 @@ FRONT_END = '127.0.0.1:3000/'
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 600
-
-    # or should you use this setting with time(instead of redirection?)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
