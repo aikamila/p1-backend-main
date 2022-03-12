@@ -194,7 +194,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.shangify.com"
 ]
 
-FRONT_END = '127.0.0.1:3000/'
+FRONT_END = 'https://www.shangify.com/'
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
