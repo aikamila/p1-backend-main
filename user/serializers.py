@@ -56,6 +56,9 @@ class UserSerializer(BasicInfoUserSerializer):
         # you must remember that [] notation on a dictionary will raise KeyError if a given key doesn't exist
         # it is better to use get in case of fields that are not required
         # or just use **validated_data
+        pass
+
+    def save(self):
         model = get_user_model()
         user = model.objects.create_user(email=self.validated_data['email'],
                                          name=self.validated_data['name'],
@@ -63,11 +66,6 @@ class UserSerializer(BasicInfoUserSerializer):
                                          username=self.validated_data['username'],
                                          password=self.validated_data['password'],
                                          bio=self.validated_data.get('bio', ''))
-        return user
-
-    def save(self):
-        model = get_user_model()
-        user = model.objects.get(email=self.validated_data['email'])
         email = InitialVerificationEmail(user)
         try:
             dispatcher = EmailDispatcher(email)
