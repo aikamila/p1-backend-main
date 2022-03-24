@@ -63,7 +63,15 @@ class UserSerializer(BasicInfoUserSerializer):
                                          username=self.validated_data['username'],
                                          password=self.validated_data['password'],
                                          bio=self.validated_data.get('bio', ''))
-        email = InitialVerificationEmail(user)
-        dispatcher = EmailDispatcher(email)
-        dispatcher.send()
         return user
+
+    def save(self):
+        model = get_user_model()
+        user = model.objects.get(email=self.validated_data['email'])
+        email = InitialVerificationEmail(user)
+        try:
+            dispatcher = EmailDispatcher(email)
+            dispatcher.send()
+        except:
+            user.delete()
+
