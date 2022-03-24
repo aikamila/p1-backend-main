@@ -27,7 +27,6 @@ class CreatePostTest(APITestCase):
         self.user1 = MyUser.objects.create_user(**user1_data)
         self.user1.is_active = True
         self.user1.save()
-
         self.token_user1 = self.client.post(token_url, {
             "email": self.user1.email,
             "password": "Password"
