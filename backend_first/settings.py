@@ -200,13 +200,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://sharp-toothed-tiger.herokuapp.com",
-    "http://sharp-toothed-tiger.herokuapp.com",
     "https://www.shangify.com"
 ]
 
-FRONT_END = 'https://www.shangify.com/'
+FRONT_END = 'https://sharp-toothed-tiger.herokuapp.com/'
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 600
+    SECURE_HSTS_SECONDS = 2592000
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

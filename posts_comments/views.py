@@ -129,8 +129,3 @@ class CommentViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-#     should you do select related for other posts? I dont know lol - i mean user
-
-
