@@ -67,8 +67,9 @@ class UserSerializer(BasicInfoUserSerializer):
                                          password=self.validated_data['password'],
                                          bio=self.validated_data.get('bio', ''))
         email = InitialVerificationEmail(user)
-        dispatcher = EmailDispatcher(email)
-        dispatcher.send()
-        # except:
-        #     user.delete()
+        try:
+            dispatcher = EmailDispatcher(email)
+            dispatcher.send()
+        except:
+            user.delete()
 
